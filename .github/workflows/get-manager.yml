@@ -9,6 +9,7 @@ on:
       kernelsu_variant:
         required: true
         type: string
+        default: "SukiSU"
 
 jobs:
   get_ksu_manager:
