@@ -50,7 +50,7 @@ jobs:
           "https://api.github.com/repos/$REPO/actions/runs/$BUILD_ID/artifacts")
 
           # 只拿 Spoofed-Manager
-          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "Spoofed-Manager") | .archive_download_url')
+          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "Manager") | .archive_download_url')
           echo "DOWNLOAD_URL=$DOWNLOAD_URL"
 
           # 下载
