@@ -13,7 +13,9 @@ on:
 jobs:
   get_ksu_manager:
     runs-on: ubuntu-latest
+      
     env:
+      kernelsu_variant: SukiSU
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
