@@ -1,22 +1,19 @@
 name: GetManager
 permissions:
-  contents: write  # Allow writing to repository contents (for pushing tags)
-  actions: read   # Allows triggering actions
+  contents: write
+  actions: read
 
 on:
-  workflow_call: # This allows this workflow to be called from another workflow
+  workflow_call:
     inputs:
       kernelsu_variant:
         required: true
         type: string
-        default: "SukiSU"
 
 jobs:
   get_ksu_manager:
     runs-on: ubuntu-latest
-      
     env:
-      kernelsu_variant: SukiSU
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
@@ -36,32 +33,33 @@ jobs:
           echo $KSU_VERSION
           echo "KSU_VERSION=$KSU_VERSION" >> $GITHUB_ENV
 
-      - name: 添加 KernelSU
+      - name: 获取 Spoofed-Manager
         run: |
           echo "SukiSU..."
           REPO="SukiSU-Ultra/SukiSU-Ultra"
           FILENAME="build-manager.yml"
 
-          # 获取最新成功构建的 ID
+          # 获取最新成功构建
           BUILD_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           "https://api.github.com/repos/$REPO/actions/workflows/$FILENAME/runs?status=success" | \
           jq -r '.workflow_runs[0].id')
           echo "BUILD_ID=$BUILD_ID"
-          # 获取该构建的 Artifacts
-          ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/$REPO/actions/runs/$BUILD_ID/artifacts")
-          echo "ARTIFACTS=$ARTIFACTS"
-          # 获取 Manager 文件的下载链接
-          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name | contains("Manager")) | .archive_download_url')
 
-          # 下载 Manager 文件
-          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "${{ inputs.kernelsu_variant }}-管理器(${{ env.KSU_VERSION }}).zip" "$DOWNLOAD_URL"
-          echo "Manager 文件已下载为：${{ inputs.kernelsu_variant }}-管理器(${{ env.KSU_VERSION }}).zip"
+          # 获取 artifacts
+          ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/$REPO/actions/runs/$BUILD_ID/artifacts")
+
+          # 只拿 Spoofed-Manager
+          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "Spoofed-Manager") | .archive_download_url')
+          echo "DOWNLOAD_URL=$DOWNLOAD_URL"
+
+          # 下载
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "${{ inputs.kernelsu_variant }}-Spoofed-管理器(${{ env.KSU_VERSION }}).zip" "$DOWNLOAD_URL"
           unzip *.zip
 
       - name: 上传编译资产
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.kernelsu_variant }}-Manager(${{ env.KSU_VERSION }})
+          name: ${{ inputs.kernelsu_variant }}-Spoofed-Manager(${{ env.KSU_VERSION }})
           path: |
             *.apk
