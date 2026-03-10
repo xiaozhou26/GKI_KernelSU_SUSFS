@@ -51,6 +51,8 @@ on:
         required: true
         type: boolean
         default: true
+      bbg:
+        default: false
 jobs:
   build-kernel-a12-5-10:
     uses: ./.github/workflows/kernel-a12-5.10.yml
