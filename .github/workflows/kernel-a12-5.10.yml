@@ -40,6 +40,9 @@ on:
         description: '是否启用内核层面阻止对关键分区/设备节点的非法写入(LSM)？'
         type: boolean
         default: false
+      set_defbbr:
+        type: boolean
+        default: true
   
 jobs:
   build-kernel-a12-5-10-kernelsu-susfs:
@@ -66,5 +69,6 @@ jobs:
       use_zram: ${{ inputs.use_zram }}
       use_kpm: ${{ inputs.use_kpm }}
       supp_op: ${{ inputs.supp_op || false }}
+      set_defbbr: ${{inputs.set_defbbr}}
       BBG: ${{ inputs.BBG || false }}
 
